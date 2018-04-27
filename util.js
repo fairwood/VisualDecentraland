@@ -26,7 +26,6 @@ function int(x) {
 function encodeTokenId(x, y) {
     let enc = (new BigNumber(uint(x)).mul(factor).maskn(256).and(clearLow)).or(new BigNumber(uint(y)).and(clearHigh));
     return enc;
-    // return ((uint(x) * factor) & clearLow) | (uint(y) & clearHigh);
 }
 
 function decodeTokenId(value) {

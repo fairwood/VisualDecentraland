@@ -6,13 +6,6 @@ var util = require('./util');
 
 var api = require('etherscan-api').init('E8Q1G2442V7FERC193MR9Y9XP825JZYFX9');
 
-
-console.log(new BigNumber('115792089237316195423570985008687907853269984665640564039457584007913129639914').toString(16));
-console.log(util.uint(-22).toString(16));
-console.log(util.decodeTokenId(new BigNumber('ffffffffffffffffffffffffffffffea00000000000000000000000000000046', 16)));
-// console.log(xy[0], xy[1]);
-console.log(util.encodeTokenId(-22, 70).toString(16)); //fffffffffffffffffffffffffffff4ea00000000000000000000000000000046
-
 //assetID to Auction
 var contractAddress = '0xB3BCa6F5052c7e24726b44da7403b56A8A1b98f8';
 var functionSignature = Web3EthAbi.encodeFunctionSignature('auctionByAssetId(uint256)');
@@ -38,7 +31,7 @@ for (var x = 50; x < 60; x++) { //-150~150
                     0000000000000000000000000000000000000000000002c0bb3dd30c4e200000
                     000000000000000000000000000000000000000000000000000001643e8a2c00 */
                 let priceStr = data.result.substr(2 + 64 + 64, 64);
-                let price = parseInt(priceStr, 16);
+                let price = new BigNumber(priceStr, 16);
                 console.log('(' + x + ',' + y + ')', price / 1e18);
             });
         }

@@ -4,20 +4,20 @@ var util = require('./util');
 
 var api = require('etherscan-api').init('E8Q1G2442V7FERC193MR9Y9XP825JZYFX9');
 
-var getLogs = api.log.getLogs('0xb3bca6f5052c7e24726b44da7403b56a8a1b98f8',
-    5509000,
+var contractAddress = '0xB3BCa6F5052c7e24726b44da7403b56A8A1b98f8';
+var getLogs = api.log.getLogs(contractAddress,
+    5500000,
     'latest',
-    '0x9493ae82b9872af74473effb9d302efba34e0df360a99cc5e577cd3f28e3cab2'
+    //'0x9493ae82b9872af74473effb9d302efba34e0df360a99cc5e577cd3f28e3cab2' //Event topic0
 );
 
-getLogs.then(function(data) {
+getLogs.then(function (data) {
     let result = data.result;
-    console.log(data.result);
+    // console.log(data.result);
     let topics = result[0].topics;
-    let data2 = result[0].data;
-    console.log('======', data2);
-    console.log(util.decodeTokenId(new BigNumber(topics[1], 16)));
-    console.log(new BigNumber(data2.substr(2+64, 64), 16).div(new BigNumber('1000000000000000000')).toString(10));
+    console.log('======');
+    console.log('(x,y)', util.decodeTokenId(new BigNumber(topics[1], 16)));
+    console.log('price', new BigNumber(result[0].data.substr(2 + 64, 64), 16).div(new BigNumber('1000000000000000000')).toString(10)); //get price in MANA
 });
 
 /*
@@ -29,7 +29,7 @@ https://api.etherscan.io/api?module=logs&action=getLogs
 &apikey=YourApiKeyToken
 */
 
-/*
+/*Event {
     address: '0xb3bca6f5052c7e24726b44da7403b56a8a1b98f8',
        topics: [Array],
        data: '
@@ -45,3 +45,7 @@ https://api.etherscan.io/api?module=logs&action=getLogs
        transactionHash: '0x5b601b8b1e09f923a8f00ebc90b0349546e53f793146c3f5cfc28b69d4b6ff9d',
        transactionIndex: '0xe' }
 */
+
+//AuctionCreated   0x9493ae82b9872af74473effb9d302efba34e0df360a99cc5e577cd3f28e3cab2
+//AuctionSuccessful 0xedcc7e1c269bc295dc24e74dc46b129c8449e6b0544af73b57c4201b78d119db
+//AuctionCancelled 0x88bd2ba46f3dc2567144331c35bd4c5ced3d547d8828638a152ddd9591c137a6

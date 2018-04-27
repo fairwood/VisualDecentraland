@@ -1,58 +1,17 @@
+// import $ from './util';
+
 var Web3EthAbi = require('web3-eth-abi');
 const BigNumber = require('bn.js');
+var util = require('./util');
 
 var api = require('etherscan-api').init('E8Q1G2442V7FERC193MR9Y9XP825JZYFX9');
 
-const clearLow = new BigNumber('ffffffffffffffffffffffffffffffff00000000000000000000000000000000', 16);
-const clearHigh = new BigNumber('00000000000000000000000000000000ffffffffffffffffffffffffffffffff', 16);
-const factor = new BigNumber('100000000000000000000000000000000', 16);
-
-function uint(x) {
-    x = new BigNumber(x);
-    if (x.isNeg()) {
-        let max = new BigNumber('10000000000000000000000000000000000000000000000000000000000000000', 16);
-        return max.add(x);
-    } else {
-        return x;
-    }
-}
-function int(x) {
-    console.log('20--', x);//8fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4ea
-    let half = new BigNumber('8000000000000000000000000000000000000000000000000000000000000000', 16);
-    if (x.gte(half)) {
-        let max = new BigNumber('10000000000000000000000000000000000000000000000000000000000000000', 16);
-        return x.sub(max);
-    } else {
-        return x;
-    }
-}
-
-function encodeTokenId(x, y) {
-    let enc = (new BigNumber(uint(x)).mul(factor).maskn(256).and(clearLow)).or(new BigNumber(uint(y)).and(clearHigh));
-    return enc;
-    // return ((uint(x) * factor) & clearLow) | (uint(y) & clearHigh);
-}
-
-function decodeTokenId(value) {
-    let x = value.and(clearLow).shrn(128);
-    let y = value.and(clearHigh);
-    console.log(x, y);
-    return [expandNegative128BitCast(x).toString(10), expandNegative128BitCast(y).toString(10)];
-}
-
-function expandNegative128BitCast(value) {
-    if (!(value.and(new BigNumber(1).shln(127)).isZero())) {
-        console.log('45**', value, clearLow, value.or(clearLow));
-        return int(value.or(clearLow));
-    }
-    return int(value);
-}
 
 console.log(new BigNumber('115792089237316195423570985008687907853269984665640564039457584007913129639914').toString(16));
-console.log(uint(-22).toString(16));
-console.log(decodeTokenId(new BigNumber('ffffffffffffffffffffffffffffffea00000000000000000000000000000046', 16)));
+console.log(util.uint(-22).toString(16));
+console.log(util.decodeTokenId(new BigNumber('ffffffffffffffffffffffffffffffea00000000000000000000000000000046', 16)));
 // console.log(xy[0], xy[1]);
-console.log(encodeTokenId(-22, 70).toString(16)); //fffffffffffffffffffffffffffff4ea00000000000000000000000000000046
+console.log(util.encodeTokenId(-22, 70).toString(16)); //fffffffffffffffffffffffffffff4ea00000000000000000000000000000046
 
 //assetID to Auction
 var contractAddress = '0xB3BCa6F5052c7e24726b44da7403b56A8A1b98f8';
@@ -63,7 +22,7 @@ var i = 0;
 for (var x = 50; x < 60; x++) { //-150~150
     for (var y = -12; y < -10; y++) {
         function call(x, y) {
-            var assetID = encodeTokenId(x, y).toString(16, 64);
+            var assetID = util.encodeTokenId(x, y).toString(16, 64);
             var callABI = functionSignature + assetID;
 
             var eth_call = api.proxy.eth_call(
